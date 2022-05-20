@@ -3,7 +3,9 @@ name: ci
 on:
   push:
     branches:
-      - 'docker'
+      - 'main'
+    paths:
+      - 'docker/**'
 jobs:
   docker:
     runs-on: ubuntu-latest
