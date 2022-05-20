@@ -1,0 +1,153 @@
+#########################################################################
+#
+# Copyright (C) 2020 Salvador Real.
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+########################################################################
+# This script initializes the network interfaces, executes the file
+# $(hostname).startup and copies essetianls files to "/etc/"
+
+# If the "/root" directory is persistent, when starting the node the files do
+# not load correctly. You have to reload with "cd"
+[[ "$GNS3_VOLUMES" =~ "/root" ]] && cd $PWD
+
+# Since there are no persistent files nor can the "/etc" folder be set as
+# persistent, you have to copy them to another directory and when the node
+# starts move them to "/etc/"
+# action before: is an action before the routine
+# action after: is an action after the routine
+# routines are done by files
+# for example, the "sysctl.conf" file, your routine is to delete
+# the original file, create a symbolic link and run sysctl -p after the routine
+# the "hosts" file contains only IPv6 as GNS3 does not support IPv6 in
+# "additional hosts", your routine is to add the IPv6 in the original file
+routines() {
+    local action=""
+    local action_before=""
+    local action_after=""
+    local verbose="True"
+
+    case "$1" in
+    hosts)
+
+        if [[ -n $IPv6_Hosts ]]; then
+            action="append"
+            unset IPv6_Hosts
+        else
+            action="nothing"
+        fi
+        ;;
+
+    sysctl.conf)
+
+        if [[ -n $sysctl_conf ]]; then
+            action="link"
+            unset sysctl_conf
+            action_after="sysctl -p"
+        else
+            action="nothing"
+        fi
+
+        ;;
+    *)
+        action="link"
+        ;;
+    esac
+
+    if [[ -n $action_before ]]; then
+        if [ "$verbose" == "False" ]; then
+            eval $action_before
+        else
+            eval $action_before >/dev/null 2>/dev/null
+        fi
+    fi
+
+    case $action in
+    link)
+        if [ "$verbose" == "False" ]; then
+            rm -rf /etc/"$1"
+            ln -s ~/.etc/"$1" /etc/
+        else
+            rm -rf /etc/"$1" >/dev/null 2>/dev/null
+            ln -s ~/.etc/"$1" /etc/ >/dev/null 2>/dev/null
+        fi
+        ;;
+    append)
+        if [ "$verbose" == "False" ]; then
+            cat ~/.etc/"$1" >>/etc/"$1"
+        else
+            cat ~/.etc/"$1" >>/etc/"$1" 2>/dev/null
+        fi
+        ;;
+    esac
+
+    if [[ -n $action_after ]]; then
+        if [ "$verbose" == "False" ]; then
+            eval $action_after
+        else
+            eval $action_after >/dev/null 2>/dev/null
+        fi
+    fi
+}
+
+if [[ ! -n $initialized ]]; then
+    # GNS3 has a script that initializes the network interfaces but it is only
+    # compatible with IPv4, it can also have errors if you execute any
+    # routine ("pre-up" "post-up" "down" "pre-down" "post-down", "down")
+    # since the binaries it uses are too old.
+    # The best thing would be to comment on the GNS3 code lines that
+    # initialize the interfaces but just in case, with this I free them.
+    ls /sys/class/net/ | while read dev; do
+        grep -qP '^\s*auto\s+'$dev /etc/network/interfaces 2>/dev/null && ifdown $dev >/dev/null 2>/dev/null
+        ip addr flush $dev 2>/dev/null
+        ip link set $dev down >/dev/null 2>/dev/null
+    done
+
+    if [ -d ~/.etc ]; then
+        ls -a ~/.etc/ | while read file; do
+            [[ $file =~ ^\.{1,2}$ ]] && continue
+            routines "$file"
+        done
+    fi
+
+    # Following the netgui standard with the initialization file,
+    # if it exists execute it
+    if [ -f ~/$(hostname).startup ]; then
+        bash ~/$(hostname).startup
+    fi
+
+    # Initializes only the network interfaces that are defined
+    # in the file "/etc/network/interfaces"
+    # If the initialization file ($ hostname.startup) already
+    # starts the network interface, it is ignored.
+    # The ifup command reads the configuration from the file "/etc/network/interfaces"
+    grep -oP '^\s*auto\s+\K.+' /etc/network/interfaces | while read dev; do
+        if [ $(cat /sys/class/net/$dev/operstate) == "down" ]; then
+            ifup $dev
+        fi
+    done
+
+    # If the interface "lo" has not yet been initialized, it starts
+    if [ $(cat /sys/class/net/lo/operstate) == "down" ]; then
+        ip link set lo up
+    fi
+
+    export initialized="True"
+fi
+# The owner and group of persistent volumes are changed recursively.
+# This is to be able to accecss the folders on the host OS at runtime
+if [[ -n $GNS3_VOLUMES ]]; then
+    sed 's/:/ /g' <<<$GNS3_VOLUMES | xargs chown -R 1000:1000 2>/dev/null
+fi

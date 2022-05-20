@@ -1,0 +1,120 @@
+FROM ubuntu:bionic
+
+WORKDIR /root
+
+# Add apt repository 'frr'
+ADD https://deb.frrouting.org/frr/keys.asc ./
+RUN apt-get update &&\
+    env DEBIAN_FRONTEND=noninteractive \
+    apt-get dist-upgrade --no-install-recommends -y &&\
+    apt-get install --no-install-recommends -y gpg &&\
+    gpg --dearmor --output /etc/apt/trusted.gpg.d/frr.gpg < keys.asc &&\
+    echo "deb http://deb.frrouting.org/frr/ bionic frr-stable" > /etc/apt/sources.list.d/frr.list &&\
+    rm keys.asc
+
+# Add man support for new packages
+RUN sed -i 's:^path-exclude=/usr/share/man:#path-exclude=/usr/share/man:' /etc/dpkg/dpkg.cfg.d/excludes
+
+# Add ca-certificates for secure connections
+RUN apt-get install --no-install-recommends -y ca-certificates
+
+# Install all packages
+RUN apt-get update && \
+    env DEBIAN_FRONTEND=noninteractive \
+    apt-get install --no-install-recommends -y \
+    language-pack-es\
+    man-db\
+    manpages-es\
+    manpages-posix\
+    info\
+    apache2\
+    nginx\
+    bind9\
+    ebtables\
+    dialog\
+    bridge-utils\
+    command-not-found\
+    bash-completion\
+    dnsutils\
+    ethtool\
+    frr\
+    frr-doc\
+    frr-pythontools\
+    frr-rpki-rtrlib\
+    frr-snmp\
+    ifupdown\
+    iperf\
+    iputils-arping\
+    iputils-clockdiff\
+    iputils-ping\
+    iputils-tracepath\
+    iptables\
+    ufw\
+    isc-dhcp-server\
+    isc-dhcp-client\
+    isc-dhcp-relay\
+    isc-dhcp-common\
+    lsof\
+    less\
+    mtr\
+    net-tools\
+    netcat\
+    nmap\
+    python3\
+    ssh\
+    sudo\
+    vim\
+    nano\
+    mc\
+    tcpdump\
+    telnet\
+    traceroute\
+    vlan\
+    whois\
+    wget\
+    curl\
+    lynx\
+    radvd\
+    openvpn\
+    easy-rsa\
+    &&\
+    rm -r /usr/lib/locale/* &&\
+    echo "es_NI.UTF-8 UTF-8" > /var/lib/locales/supported.d/es &&\
+    echo -e "LANG=\"es_NI.UTF-8\"\nLANGUAGE=\"es_NI:es\"" >> /etc/default/locale &&\
+    locale-gen --purge &&\
+    apt-get remove --autoremove -y hicolor-icon-theme &&\
+    rm -rf /var/lib/apt/lists/* /etc/apt/apt.conf.d/docker-clean
+
+# Set language to Spanish
+ENV LANG es_NI.UTF-8
+ENV LANGUAGE es_NI:es 
+ENV LC_ALL es_NI.UTF-8
+
+# Save history each time a command is executed
+ENV PROMPT_COMMAND 'history -a'
+
+# Set colors support and completion
+ENV TERM xterm-256color
+RUN sed -i "46s/^/#/"        /etc/skel/.bashrc 
+RUN sed -i "35,41s/^#//"     /etc/bash.bashrc
+RUN sed -i "39b0; 97,99b0; b ;:0 ;s/^#//" .bashrc
+
+# Add alias for packages similar to netgui
+RUN for i in arpd ebtables ip ip6tables ip6tables-restore\
+    ip6tables-save iptables iptables-apply\
+    iptables-save iptables-xml lnstat\  
+    nstat routef routel rtacct rtmon\
+    ss tc vtysh; do\
+    package=$(which $i);\
+    ln -s $package $(dirname $package)/orig-$(basename $package);\
+    done
+
+# Add script inizialize network interfaces
+ADD docker_init /boot/docker_init
+RUN echo "\n# Initialize node, this is for gns3.\n# Network interfaces\n# Configuration files\n# Script \$(hosthome).startup\nif [ -f /boot/docker_init ]; then\n    . /boot/docker_init\nfi" | tee -a .bashrc /etc/skel/.bashrc
+
+RUN useradd --create-home --shell /bin/bash --groups sudo --uid 1000 anfitrion
+
+CMD [ "bash" ]
+
+# vim: set ts=4 sw=4 filetype=docker et:
