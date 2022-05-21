@@ -2,11 +2,11 @@ name: Docker image ci
 
 on:
   push:
-    branches:
-      - 'main'
+    paths: [docker/**]
+    branches: [main]
   pull_request:
-    branches:
-      - 'main'
+    paths: [docker/**]
+    branches: [main]
 jobs:
   avoid_redundancy:
     runs-on: ubuntu-20.04
