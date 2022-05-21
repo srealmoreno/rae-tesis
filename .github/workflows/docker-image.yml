@@ -36,7 +36,6 @@ jobs:
           path: /tmp/docker-image-${{ github.sha }}.tar.gz
 
   publish:
-    if: ${{ github.event.event === 'push' }}
     runs-on: ubuntu-20.04
     needs: [build]
     steps:
