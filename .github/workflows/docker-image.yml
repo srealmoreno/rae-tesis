@@ -47,7 +47,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: docker-image-${{ github.sha }}.tar.gz
-          path: /tmp/docker-image-${{ github.sha }}.tar.gz
+          path: /tmp/
       -
         name: Load image
         run: |
