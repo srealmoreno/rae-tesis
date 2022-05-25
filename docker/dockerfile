@@ -18,6 +18,11 @@ RUN sed -i 's:^path-exclude=/usr/share/man:#path-exclude=/usr/share/man:' /etc/d
 # Add ca-certificates for secure connections
 RUN apt-get install --no-install-recommends -y ca-certificates
 
+# Set language to Spanish
+ENV LANG es_NI.UTF-8
+ENV LANGUAGE es_NI:es 
+ENV LC_ALL es_NI.UTF-8
+
 # Install all packages
 RUN apt-get update && \
     env DEBIAN_FRONTEND=noninteractive \
@@ -79,17 +84,11 @@ RUN apt-get update && \
     openvpn\
     easy-rsa\
     &&\
-    rm -r /usr/lib/locale/* &&\
-    echo "es_NI.UTF-8 UTF-8" > /var/lib/locales/supported.d/es &&\
-    echo -e "LANG=\"es_NI.UTF-8\"\nLANGUAGE=\"es_NI:es\"" >> /etc/default/locale &&\
-    locale-gen --purge &&\
+    update-locale 'LANG=es_NI.UTF-8' 'LANGUAGE=es_NI:es' 'LC_ALL=es_NI.UTF-8' &&\
+    rm -rf /usr/lib/locale/* &&\
+    locale-gen --purge 'es_NI.UTF-8' &&\
     apt-get remove --autoremove -y hicolor-icon-theme &&\
     rm -rf /var/lib/apt/lists/* /etc/apt/apt.conf.d/docker-clean
-
-# Set language to Spanish
-ENV LANG es_NI.UTF-8
-ENV LANGUAGE es_NI:es 
-ENV LC_ALL es_NI.UTF-8
 
 # Save history each time a command is executed
 ENV PROMPT_COMMAND 'history -a'
