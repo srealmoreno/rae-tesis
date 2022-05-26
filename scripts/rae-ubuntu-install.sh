@@ -56,6 +56,10 @@ function prompt_yes_or_no() {
 	local -r PROMPT="$1"
 	local -l answer
 
+	if [ "$DEBIAN_FRONTEND" = "noninteractive" ]; then
+		return 0
+	fi
+
 	while true; do
 		read -p "$PROMPT [y/n] " answer
 		case $answer in
@@ -77,6 +81,7 @@ function prompt_yes_or_no() {
 		esac
 	done
 }
+
 function close_graphical_session() {
 	msg_warn 'is required to close the graphical session.'
 	tput sc
@@ -94,7 +99,9 @@ function press_any_key() {
 	tput setab 1
 	# Invisible cursor
 	tput civis
-	read -n 1 -s -r -p ' Press any key to continue...'
+	if [ "$DEBIAN_FRONTEND" != 'noninteractive' ]; then
+		read -n 1 -s -r -p 'Press any key to continue...'
+	fi
 	# Reset foreground
 	tput sgr0
 	# Reset background
@@ -472,10 +479,6 @@ function arguments_parse() {
 	if [ $# -eq 0 ]; then
 		show_help
 	fi
-
-	#options=$(getopt -o hagdvit --long help,all,install-docker,install-gns3,install-virtualbox,import-docker-image,import-gns3-templates --name "$0" -- "$@")
-
-	#eval set -- "$options"
 
 	while [ $# -gt 0 ]; do
 		case "$1" in
