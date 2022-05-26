@@ -18,6 +18,12 @@ function msg_error() {
 }
 
 function create_window() {
+	local LINES=$(tput lines)
+
+	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
+		return 0
+	fi
+
 	# Create a new window
 	tput smcup
 
@@ -39,6 +45,10 @@ function create_window() {
 function close_window() {
 	local LINES=$(tput lines)
 
+	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
+		return 0
+	fi
+	
 	# Delete window
 	tput rmcup
 
@@ -56,7 +66,7 @@ function prompt_yes_or_no() {
 	local -r PROMPT="$1"
 	local -l answer
 
-	if [ "$DEBIAN_FRONTEND" = "noninteractive" ]; then
+	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
 		return 0
 	fi
 
@@ -84,6 +94,12 @@ function prompt_yes_or_no() {
 
 function close_graphical_session() {
 	msg_warn 'is required to close the graphical session.'
+
+	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
+		msg_warn 'Please close the graphical session manually.'
+		return 0
+	fi
+
 	tput sc
 	if prompt_yes_or_no 'Do you want to close it now?'; then
 		loginctl terminate-session $XDG_SESSION_ID || pkill -u $SUDO_USER
@@ -99,9 +115,11 @@ function press_any_key() {
 	tput setab 1
 	# Invisible cursor
 	tput civis
+
 	if [ "$DEBIAN_FRONTEND" != 'noninteractive' ]; then
 		read -n 1 -s -r -p 'Press any key to continue...'
 	fi
+
 	# Reset foreground
 	tput sgr0
 	# Reset background
