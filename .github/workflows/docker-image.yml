@@ -26,9 +26,10 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: docker
-          tags: ${{github.repository}}:${{github.run_number}}, ${{github.repository}}:latest
+          tags: ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}, ${{ secrets.DOCKERHUB_REPO }}:latest
           outputs: type=docker,dest=/tmp/docker-image-${{ github.run_number }}.tar.gz
       -
+        if: ${{ github.event_name == 'push' }}
         name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
@@ -62,5 +63,5 @@ jobs:
       -
         name: Publish image
         run: |
-          docker push ${{ github.repository }}:${{ github.run_number }}
-          docker push ${{ github.repository }}:latest
+          docker push ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}
+          docker push ${{ secrets.DOCKERHUB_REPO }}:latest
