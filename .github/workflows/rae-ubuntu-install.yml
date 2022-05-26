@@ -1,0 +1,28 @@
+name: Ubuntu script install - tests
+on:
+  pull_request:
+    paths: [scripts/rae-ubuntu-install.sh]
+    branches: [main]
+jobs:
+  test-ubuntu-focal:
+    runs-on: ubuntu-20.04
+    steps:
+      -
+        uses: actions/checkout@v2
+      -
+        name: execute install script
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          sudo chmod +x ./scripts/rae-ubuntu-install.sh
+          sudo -E ./scripts/rae-ubuntu-install.sh -a
+  test-ubuntu-bionic:
+      runs-on: ubuntu-18.04
+      steps:
+        -
+          uses: actions/checkout@v2
+        -
+          name: execute install script
+          run: |
+            export DEBIAN_FRONTEND=noninteractive
+            sudo chmod +x ./scripts/rae-ubuntu-install.sh
+            sudo -E ./scripts/rae-ubuntu-install.sh -a
