@@ -1,0 +1,4 @@
+shell=bash
+enable=quote-safe-variables
+enable=check-unassigned-uppercase
+disable=SC2181
