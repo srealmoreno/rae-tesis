@@ -9,7 +9,7 @@ RUN apt-get update &&\
     apt-get dist-upgrade --no-install-recommends -y &&\
     apt-get install --no-install-recommends -y gpg &&\
     gpg --dearmor --output /etc/apt/trusted.gpg.d/frr.gpg < keys.asc &&\
-    echo "deb http://deb.frrouting.org/frr/ bionic frr-stable" > /etc/apt/sources.list.d/frr.list &&\
+    echo 'deb http://deb.frrouting.org/frr/ bionic frr-stable' > /etc/apt/sources.list.d/frr.list &&\
     rm keys.asc
 
 # Add man support for new packages
@@ -87,6 +87,7 @@ RUN apt-get update && \
     update-locale 'LANG=es_NI.UTF-8' 'LANGUAGE=es_NI:es' 'LC_ALL=es_NI.UTF-8' &&\
     rm -rf /usr/lib/locale/* &&\
     locale-gen --purge 'es_NI.UTF-8' &&\
+    apt-get clean &&\
     apt-get remove --autoremove -y hicolor-icon-theme &&\
     rm -rf /var/lib/apt/lists/* /etc/apt/apt.conf.d/docker-clean
 
@@ -110,8 +111,8 @@ RUN for i in arpd ebtables ip ip6tables ip6tables-restore\
     done
 
 # Add script inizialize network interfaces
-ADD docker_init /boot/docker_init
-RUN echo "\n# Initialize node, this is for gns3.\n# Network interfaces\n# Configuration files\n# Script \$(hosthome).startup\nif [ -f /boot/docker_init ]; then\n    . /boot/docker_init\nfi" | tee -a .bashrc /etc/skel/.bashrc
+COPY docker_init /boot/docker_init
+RUN printf '\n# Initialize node, this is for gns3.\n# Network interfaces\n# Configuration files\n# Script \$(hosthome).startup\nif [ -f /boot/docker_init ]; then\n    . /boot/docker_init\nfi\n' | tee -a .bashrc /etc/skel/.bashrc
 
 RUN useradd --create-home --shell /bin/bash --groups sudo --uid 1000 anfitrion
 
