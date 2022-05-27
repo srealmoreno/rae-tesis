@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v3
       -
         name: Run ShellCheck
-        uses: azohra/shell-linter@0.6.0
+        uses: azohra/shell-linter@latest
         with:
           path: docker/!(dockerfile)
   build:
