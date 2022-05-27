@@ -1,43 +1,58 @@
 #!/bin/bash
 
 function msg_ok {
-	echo -e "\e[42;30m   OK   \e[m $@"
+	echo -e "\e[42;30m   OK   \e[m $*"
 }
 
 function msg_info() {
-	echo -e "\e[44;30m  INFO  \e[m $@"
+	echo -e "\e[44;30m  INFO  \e[m $*"
 }
 
 function msg_warn() {
-	echo -e "\e[43;30m  WARN  \e[m $@"
+	echo -e "\e[43;30m  WARN  \e[m $*"
 }
 
 function msg_error() {
-	echo -e "\e[41m ERROR  \e[m $@" >&2
+	echo -e "\e[41m ERROR  \e[m $*" >&2
 	exit 1
 }
 
 function create_window() {
+	local -i LINES
+
+	# shellcheck disable=SC2154
+	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
+		return 0
+	fi
+
+	LINES=$(tput lines)
+
 	# Create a new window
 	tput smcup
 
 	# Set window size TOP -1 BOTTOM -2 for window name
-	tput csr 1 $(($LINES - 2))
+	tput csr 1 $((LINES - 2))
 
 	# Set window name (TOP)
 	tput cup 0 0
-	echo -e "\e[44;30m $@\e[K\e[m"
+	echo -e "\e[44;30m $*\e[K\e[m"
 
 	# Set window size (BOTTOM)
-	tput cup $LINES 0
-	echo -e "\e[44;30m $@\e[K\e[m"
+	tput cup "$LINES" 0
+	echo -e "\e[44;30m $*\e[K\e[m"
 
 	# Set cursor position (BOTTOM)
 	tput cup 1 0
 }
 
 function close_window() {
-	local LINES=$(tput lines)
+	local -i LINES
+
+	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
+		return 0
+	fi
+
+	LINES=$(tput lines)
 
 	# Delete window
 	tput rmcup
@@ -46,7 +61,7 @@ function close_window() {
 	tput sc
 
 	# Restore winow size
-	tput csr 0 $LINES
+	tput csr 0 "$LINES"
 
 	# Restore cursor position
 	tput rc
@@ -56,12 +71,12 @@ function prompt_yes_or_no() {
 	local -r PROMPT="$1"
 	local -l answer
 
-	if [ "$DEBIAN_FRONTEND" = "noninteractive" ]; then
+	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
 		return 0
 	fi
 
 	while true; do
-		read -p "$PROMPT [y/n] " answer
+		read -r -p "$PROMPT [y/n] " answer
 		case $answer in
 		y | yes)
 			tput rc
@@ -84,9 +99,16 @@ function prompt_yes_or_no() {
 
 function close_graphical_session() {
 	msg_warn 'is required to close the graphical session.'
+
+	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
+		msg_warn 'Please close the graphical session manually.'
+		return 0
+	fi
+
 	tput sc
 	if prompt_yes_or_no 'Do you want to close it now?'; then
-		loginctl terminate-session $XDG_SESSION_ID || pkill -u $SUDO_USER
+		# shellcheck disable=SC2154
+		loginctl terminate-session "$XDG_SESSION_ID" || pkill -u "$SUDO_USER"
 	else
 		msg_warn 'Please close the graphical session manually.'
 	fi
@@ -99,9 +121,11 @@ function press_any_key() {
 	tput setab 1
 	# Invisible cursor
 	tput civis
+
 	if [ "$DEBIAN_FRONTEND" != 'noninteractive' ]; then
 		read -n 1 -s -r -p 'Press any key to continue...'
 	fi
+
 	# Reset foreground
 	tput sgr0
 	# Reset background
@@ -111,10 +135,11 @@ function press_any_key() {
 }
 
 function verify_sudo() {
-	if [ $EUID -ne 0 ]; then
+	if [ "$EUID" -ne 0 ]; then
 		msg_error 'You must run this script as root'
 	fi
 
+	# shellcheck disable=SC2154
 	if [ -z "$SUDO_USER" ] || [ -z "$SUDO_GID" ] || [ -z "$SUDO_UID" ]; then
 		msg_error 'You must run this script with sudo'
 	fi
@@ -135,6 +160,7 @@ function get_distro() {
 		msg_error 'Unable to detect your distro '/etc/os-release' file not found'
 	fi
 
+	# shellcheck source=/dev/null
 	source /etc/os-release
 
 	if [ "$ID" != 'ubuntu' ] && [ "$ID_LIKE" != 'ubuntu' ]; then
@@ -157,9 +183,9 @@ function get_distro() {
 function install_dependencies() {
 	msg_info 'Installing dependencies'
 
-	create_window 'Installing dependencies...' ${APT_DEPENDENCIES_LIST[@]}
+	create_window 'Installing dependencies...' "${APT_DEPENDENCIES_LIST[@]}"
 	apt-get update
-	apt-get install --show-progress -y --no-install-recommends ${APT_DEPENDENCIES_LIST[@]}
+	apt-get install --show-progress -y --no-install-recommends "${APT_DEPENDENCIES_LIST[@]}"
 
 	if [ $? -eq 0 ]; then
 		close_window
@@ -177,7 +203,8 @@ function add_gns3_repo() {
 	wget -qO- 'https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf88f6d313016330404f710fc9a2fd067a2e3ef7b' |
 		gpg --dearmor --output /etc/apt/trusted.gpg.d/gns3.gpg --yes || msg_error "Unable to add GNS3 gpg key"
 
-	cat <<-EOF >/etc/apt/sources.list.d/gns3-$ID-$CODENAME.list && msg_ok '' || msg_error 'Unable to create GNS3 repository file'
+	# shellcheck disable=SC2015
+	cat <<-EOF >/etc/apt/sources.list.d/gns3-"$ID"-"$CODENAME".list && msg_ok '' || msg_error 'Unable to create GNS3 repository file'
 		deb http://ppa.launchpad.net/gns3/ppa/ubuntu $CODENAME main
 		#deb-src http://ppa.launchpad.net/gns3/ppa/ubuntu $CODENAME main
 	EOF
@@ -208,7 +235,8 @@ function add_docker_repo() {
 	wget -qO- 'https://download.docker.com/linux/ubuntu/gpg' |
 		gpg --dearmor --output /etc/apt/trusted.gpg.d/docker.gpg --yes || msg_error 'Unable to add Docker gpg key'
 
-	cat <<-EOF >/etc/apt/sources.list.d/docker-$ID-$CODENAME.list && msg_ok '' || msg_error 'Unable to create Docker repository file'
+	# shellcheck disable=SC2015
+	cat <<-EOF >/etc/apt/sources.list.d/docker-"$ID"-"$CODENAME".list && msg_ok '' || msg_error 'Unable to create Docker repository file'
 		deb [arch=amd64] https://download.docker.com/linux/ubuntu $CODENAME stable
 	EOF
 
@@ -228,7 +256,8 @@ function add_virtualbox_repo() {
 	wget -qO- 'https://www.virtualbox.org/download/oracle_vbox_2016.asc' |
 		gpg --dearmor --output /etc/apt/trusted.gpg.d/virtualbox.gpg --yes || msg_error 'Unable to add VirtualBox gpg key'
 
-	cat <<-EOF >/etc/apt/sources.list.d/virtualbox-$ID-$CODENAME.list && msg_ok '' || msg_error 'Unable to create VirtualBox repository file'
+	# shellcheck disable=SC2015
+	cat <<-EOF >/etc/apt/sources.list.d/virtualbox-"$ID"-"$CODENAME".list && msg_ok '' || msg_error 'Unable to create VirtualBox repository file'
 		deb [arch=amd64] http://download.virtualbox.org/virtualbox/debian $CODENAME contrib
 	EOF
 
@@ -244,10 +273,11 @@ function add_virtualbox_repo() {
 function install_apt_list() {
 	msg_info 'Installing packages'
 
-	create_window 'Installing Packages...' ${APT_LIST_INSTALL[@]}
+	create_window 'Installing Packages...' "${APT_LIST_INSTALL[@]}"
+
 	apt-get update &&
 		DEBIAN_FRONTEND=noninteractive \
-			apt-get install --show-progress -y ${APT_LIST_INSTALL[@]}
+			apt-get install --show-progress -y "${APT_LIST_INSTALL[@]}"
 
 	if [ $? -eq 0 ]; then
 		close_window
@@ -267,9 +297,11 @@ function allow_use_package_non_root() {
 }
 
 function add_user_to_groups() {
+	local group
+
 	msg_info 'Adding user to groups'
 
-	for group in ${LIST_GROUPS[@]}; do
+	for group in "${LIST_GROUPS[@]}"; do
 		create_window "Adding user to group '$group'"
 		if [ "$group" == 'wireshark' ]; then
 			allow_use_package_non_root 'wireshark-common'
@@ -279,7 +311,7 @@ function add_user_to_groups() {
 			allow_use_package_non_root 'ubridge'
 		fi
 
-		usermod -a -G $group $SUDO_USER
+		usermod -a -G "$group" "$SUDO_USER"
 
 		if [ $? -eq 0 ]; then
 			close_window
@@ -298,9 +330,11 @@ function import_docker_image() {
 	docker_images=("$@")
 
 	msg_info 'Importing docker images'
-	for image in ${docker_images[@]}; do
-		create_window 'Importing image...' $image
-		docker pull $image
+	for image in "${docker_images[@]}"; do
+		create_window 'Importing image...' "$image"
+
+		docker pull "$image"
+
 		if [ $? -eq 0 ]; then
 			close_window
 			msg_ok "Image '$image' imported"
@@ -320,6 +354,7 @@ function create_gns3_template() {
 		msg_error "Invalid type '$type', only 'computer', 'router' and 'switch' are supported"
 	fi
 
+	# shellcheck disable=SC2034
 	computer=(
 		[default_name_format]='pc{0}'
 		[symbol]=':/symbols/classic/computer.svg'
@@ -330,6 +365,7 @@ function create_gns3_template() {
 		[template_id]='aaaabbbb-cccc-dddd-eeee-ffff12345678'
 	)
 
+	# shellcheck disable=SC2034
 	router=(
 		[default_name_format]='r{0}'
 		[symbol]=':/symbols/classic/router.svg'
@@ -340,6 +376,7 @@ function create_gns3_template() {
 		[template_id]='aaaabbbb-cccc-dddd-eeee-ffff12345677'
 	)
 
+	# shellcheck disable=SC2034
 	switch=(
 		[default_name_format]='s{0}'
 		[symbol]=':/symbols/classic/ethernet_switch.svg'
@@ -379,16 +416,17 @@ function create_gns3_template() {
 
 function get_gns3_controller_path() {
 	local controller log
-	while read log; do
+
+	while read -r log; do
 		if [ "$controller" == "" ]; then
 			controller=$(grep -oiP 'Load controller configuration file \K.*' <<<"$log")
 		fi
 
 		if [[ ${log,,} =~ 'connected to compute websocket' ]]; then
-			kill -TERM $(pgrep -f "gns3server") 2>/dev/null
+			kill -TERM "$(pgrep -f "gns3server")" 2>/dev/null
 			break
 		fi
-	done < <(runuser -u $SUDO_USER gns3server 2>/dev/null)
+	done < <(runuser -u "$SUDO_USER" gns3server 2>/dev/null)
 
 	if [ "$controller" == '' ]; then
 		msg_error "Unable to get controller configuration file"
@@ -430,6 +468,7 @@ function import_gns3_templates() {
 		if [ "$exits" == '' ]; then
 			msg_info "Creating template '$name'"
 			gns3_controller=$(jq ".templates += [$template]" <<<"$gns3_controller")
+
 			if [ $? -eq 0 ]; then
 				msg_ok
 				changes=true
@@ -443,10 +482,11 @@ function import_gns3_templates() {
 
 	if $changes; then
 		local -r date_now=$(date '+%Y-%m-%d %H:%M:%S')
+		# shellcheck disable=SC2015
 		mv "$gns3_controller_path" "${gns3_controller_path}-${date_now}.bak" &&
 			jq . <<<"$gns3_controller" >"$gns3_controller_path" &&
 			msg_ok "Templates imported" || msg_warn "Unable to import templates, error while writing configuration file"
-		chown $SUDO_USER:$SUDO_USER "$gns3_controller_path" "${gns3_controller_path}-${date_now}.bak"
+		chown "$SUDO_USER":"$SUDO_USER" "$gns3_controller_path" "${gns3_controller_path}-${date_now}.bak"
 	fi
 }
 
@@ -468,8 +508,6 @@ function show_help() {
 }
 
 function arguments_parse() {
-	local options
-
 	f_install_docker=false
 	f_install_gns3=false
 	f_install_virtualbox=false
@@ -572,8 +610,8 @@ function main() {
 	trap 'close_window' EXIT
 
 	# Distro variables
-	local CODENAME NAME VERSION ID ID_LIKE PRETTY_NAME
-	local VERSION_ID VERSION_CODENAME UBUNTU_CODENAME
+	local CODENAME ID ID_LIKE PRETTY_NAME
+	local VERSION_CODENAME UBUNTU_CODENAME
 
 	local -r DOCKER_IMAGE='srealmoreno/rae-tesis:latest'
 	local -a APT_DEPENDENCIES_LIST LIST_GROUPS APT_LIST_INSTALL
