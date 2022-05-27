@@ -5,12 +5,12 @@ las prácticas de la asignatura Redes de Area Extensa.
 
 ## Requisitos 📋
 
-- Sistema operativo: Ubuntu o derivados
-  - Focal 20.0 (LTS)
-  - Bionic 18.04 (LTS)
-  - Xenial 16.04 (LTS)
-- Conexión a Internet.
-- apt como gestor de paquetes.
+*   Sistema operativo: Ubuntu o derivados
+    *   Focal 20.0 (LTS)
+    *   Bionic 18.04 (LTS)
+    *   Xenial 16.04 (LTS)
+*   Conexión a Internet.
+*   apt como gestor de paquetes.
 
 ### Alternativas 📋
 
@@ -19,7 +19,7 @@ Si tu sistema operativo no es Ubuntu o derivado, puedes echar un vistazo a nuest
 ### Instalación 🔧
 
 Descarga el script de instalación:
-  
+
 Descargar desde línea de ordenes:
 
 ```bash
@@ -50,9 +50,9 @@ Puedes encontrar mucho más de cómo utilizar este proyecto en nuestra [Wiki](ht
 
 ## Autores ✒️
 
-- **Salvador Real** [srealmoreno](https://github.com/srealmoreno)
-- **Lester Stayner** [LesterVega](https://github.com/LesterVega)
-- **Omar Ezequiel** [OmarRizo](https://github.com/OmarRizo)
+*   **Salvador Real** [srealmoreno](https://github.com/srealmoreno)
+*   **Lester Stayner** [LesterVega](https://github.com/LesterVega)
+*   **Omar Ezequiel** [OmarRizo](https://github.com/OmarRizo)
 
 También puedes mirar la lista de todos los [contribuyentes](https://github.com/srealmoreno/rae-tesis/contributors) quíenes han participado en este proyecto.
 
@@ -62,4 +62,4 @@ Este proyecto está bajo la Licencia GNU General Public License v3.0 - mira el a
 
 ## Expresiones de Gratitud 🎁
 
-- Damos gracias a nuestro Tutor **Aldo Rene** 😊.
+*   Damos gracias a nuestro Tutor **Aldo Rene** 😊.
