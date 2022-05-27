@@ -13,7 +13,18 @@ jobs:
     steps:
       - name: Cancel redundant workflow
         uses: styfle/cancel-workflow-action@0.9.1
+  shell-check:
+    runs-on: ubuntu-20.04
+    steps:
+      -
+        uses: actions/checkout@v2
+      -
+        name: Run ShellCheck
+        uses: azohra/shell-linter@0.6.0
+        with:
+          path: docker/**
   build:
+    needs: [shell-check]
     runs-on: ubuntu-20.04
     steps:
       -
@@ -39,7 +50,7 @@ jobs:
   publish:
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-20.04
-    needs: [build]
+    needs: [shell-check, build]
     steps:
       -
         name: Set up Docker Buildx
