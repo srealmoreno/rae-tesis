@@ -4,34 +4,35 @@ WORKDIR /root
 
 # Add apt repository 'frr'
 ADD https://deb.frrouting.org/frr/keys.asc ./
+# hadolint ignore=DL3008
 RUN apt-get update &&\
     env DEBIAN_FRONTEND=noninteractive \
     apt-get dist-upgrade --no-install-recommends -y &&\
     apt-get install --no-install-recommends -y gpg &&\
     gpg --dearmor --output /etc/apt/trusted.gpg.d/frr.gpg < keys.asc &&\
     echo 'deb http://deb.frrouting.org/frr/ bionic frr-stable' > /etc/apt/sources.list.d/frr.list &&\
-    rm keys.asc
+    apt-get clean &&\
+    apt-get purge -y --auto-remove &&\
+    rm -rf /var/lib/apt/lists/* keys.asc
+
+# Set language to Spanish
+ENV LANG es_NI.UTF-8
+ENV LANGUAGE es_NI:es
+ENV LC_ALL es_NI.UTF-8
 
 # Add man support for new packages
 RUN sed -i 's:^path-exclude=/usr/share/man:#path-exclude=/usr/share/man:' /etc/dpkg/dpkg.cfg.d/excludes
 
-# Add ca-certificates for secure connections
-RUN apt-get install --no-install-recommends -y ca-certificates
-
-# Set language to Spanish
-ENV LANG es_NI.UTF-8
-ENV LANGUAGE es_NI:es 
-ENV LC_ALL es_NI.UTF-8
-
 # Install all packages
 RUN apt-get update && \
     env DEBIAN_FRONTEND=noninteractive \
-    apt-get install --no-install-recommends -y \
+    apt-get install --no-install-recommends -y --reinstall \
     language-pack-es\
     man-db\
     manpages-es\
     manpages-posix\
     info\
+    gpg\
     apache2\
     nginx\
     bind9\
@@ -76,6 +77,7 @@ RUN apt-get update && \
     traceroute\
     vlan\
     whois\
+    ca-certificates\
     wget\
     curl\
     lynx\
@@ -96,23 +98,24 @@ ENV PROMPT_COMMAND 'history -a'
 
 # Set colors support and completion
 ENV TERM xterm-256color
-RUN sed -i "46s/^/#/"        /etc/skel/.bashrc 
-RUN sed -i "35,41s/^#//"     /etc/bash.bashrc
-RUN sed -i "39b0; 97,99b0; b ;:0 ;s/^#//" .bashrc
+RUN sed -i '46s/^/#/' /etc/skel/.bashrc &&\
+    sed -i '35,41s/^#//'     /etc/bash.bashrc &&\
+    sed -i '39b0; 97,99b0; b ;:0 ;s/^#//' .bashrc
 
 # Add alias for packages similar to netgui
 RUN for i in arpd ebtables ip ip6tables ip6tables-restore\
     ip6tables-save iptables iptables-apply\
-    iptables-save iptables-xml lnstat\  
+    iptables-save iptables-xml lnstat\
     nstat routef routel rtacct rtmon\
-    ss tc vtysh; do\
-    package=$(which $i);\
-    ln -s $package $(dirname $package)/orig-$(basename $package);\
+    ss   tc vtysh; do\
+    package="$(which "$i")";\
+    ln -s "$package" "$(dirname "$package")/orig-$(basename "$package")";\
     done
 
 # Add script inizialize network interfaces
 COPY docker_init /boot/docker_init
-RUN printf '\n# Initialize node, this is for gns3.\n# Network interfaces\n# Configuration files\n# Script \$(hosthome).startup\nif [ -f /boot/docker_init ]; then\n    . /boot/docker_init\nfi\n' | tee -a .bashrc /etc/skel/.bashrc
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN printf "\n# Initialize node, this is for gns3.\n# Network interfaces\n# Configuration files\n# Script \$(hosthome).startup\nif [ -f /boot/docker_init ]; then\n    . /boot/docker_init\nfi\n" | tee -a .bashrc /etc/skel/.bashrc
 
 RUN useradd --create-home --shell /bin/bash --groups sudo --uid 1000 anfitrion
 
