@@ -13,7 +13,18 @@ jobs:
     steps:
       - name: Cancel redundant workflow
         uses: styfle/cancel-workflow-action@0.9.1
+  shell-check:
+    runs-on: ubuntu-20.04
+    steps:
+      -
+        uses: actions/checkout@v2
+      -
+        name: Run ShellCheck
+        uses: azohra/shell-linter@0.6.0
+        with:
+          path: docker/**
   build:
+    needs: [shell-check]
     runs-on: ubuntu-20.04
     steps:
       -
@@ -26,9 +37,10 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: docker
-          tags: ${{github.repository}}:${{github.run_number}}, ${{github.repository}}:latest
+          tags: ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}, ${{ secrets.DOCKERHUB_REPO }}:latest
           outputs: type=docker,dest=/tmp/docker-image-${{ github.run_number }}.tar.gz
       -
+        if: ${{ github.event_name == 'push' }}
         name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
@@ -38,7 +50,7 @@ jobs:
   publish:
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-20.04
-    needs: [build]
+    needs: [shell-check, build]
     steps:
       -
         name: Set up Docker Buildx
@@ -62,5 +74,5 @@ jobs:
       -
         name: Publish image
         run: |
-          docker push ${{ github.repository }}:${{ github.run_number }}
-          docker push ${{ github.repository }}:latest
+          docker push ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}
+          docker push ${{ secrets.DOCKERHUB_REPO }}:latest

@@ -1,10 +1,22 @@
 name: Ubuntu script install - tests
+
 on:
   pull_request:
     paths: [scripts/rae-ubuntu-install.sh]
     branches: [main]
 jobs:
-  test-ubuntu-focal:
+  shell-check:
+    runs-on: ubuntu-20.04
+    steps:
+      - 
+        uses: actions/checkout@v2
+      -
+        name: Run ShellCheck
+        uses: azohra/shell-linter@latest
+        with:
+          path: scripts/rae-ubuntu-install.sh
+  ubuntu-focal:
+    needs: [shell-check]  
     runs-on: ubuntu-20.04
     steps:
       -
@@ -15,7 +27,8 @@ jobs:
           export DEBIAN_FRONTEND=noninteractive
           sudo chmod +x ./scripts/rae-ubuntu-install.sh
           sudo -E ./scripts/rae-ubuntu-install.sh -a
-  test-ubuntu-bionic:
+  ubuntu-bionic:
+      needs: [shell-check]  
       runs-on: ubuntu-18.04
       steps:
         -
