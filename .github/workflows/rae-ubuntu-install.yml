@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - 
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       -
         name: Run ShellCheck
-        uses: azohra/shell-linter@latest
+        uses: azohra/shell-linter@0.9.1
         with:
           path: scripts/rae-ubuntu-install.sh
   ubuntu-focal:
@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       -
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       -
         name: execute install script
         run: |
@@ -32,7 +32,7 @@ jobs:
       runs-on: ubuntu-18.04
       steps:
         -
-          uses: actions/checkout@v2
+          uses: actions/checkout@v3
         -
           name: execute install script
           run: |
