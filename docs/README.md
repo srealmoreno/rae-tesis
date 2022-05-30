@@ -50,6 +50,15 @@ Para ver ayuda -h (help en inglés)
 sudo ./rae-ubuntu-install.sh -h
 ```
 
+## Docker 🐳
+
+[![Docker image ci](https://github.com/srealmoreno/rae-tesis/actions/workflows/docker-image.yml/badge.svg)](https://github.com/srealmoreno/rae-tesis/actions/workflows/docker-image.yml)
+
+Puedes echar un vistazo al archivo [dockerfile](../docker/dockerfile) para ver
+como se construye el contenedor. Si hace falta una utilidad puedes solicitarla
+abriendo una [issue](https://github.com/srealmoreno/rae-tesis/issues/new/choose)
+en el repositorio.
+
 ## Wiki 📖
 
 Puedes encontrar mucho más de cómo utilizar este proyecto en nuestra [Wiki](https://github.com/srealmoreno/rae-tesis/wiki)
