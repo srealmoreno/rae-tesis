@@ -1,0 +1,88 @@
+name: "🐞 Bug report"
+description: File a bug report
+title: "[bug]: "
+labels: ["bug 🐞"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        First off, thanks for taking the time to contribute! Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make will benefit everybody else and are greatly appreciated.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: >
+        Please describe your environment e.g: `cat /etc/os-release`
+
+        It may contain any additional information which would help to reproduce the issue.
+      placeholder: |
+        NAME="Ubuntu"
+        VERSION="20.04.4 LTS (Focal Fossa)"
+        ID=ubuntu
+        ID_LIKE=debian
+        PRETTY_NAME="Ubuntu 20.04.4 LTS"
+        VERSION_ID="20.04"
+        HOME_URL="https://www.ubuntu.com/"
+        SUPPORT_URL="https://help.ubuntu.com/"
+        BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+        PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+        VERSION_CODENAME=focal
+        UBUNTU_CODENAME=focal
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: "Please describe the expected behavior"
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+      description: "Please describe how the bug manifests"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: "Explain the steps required to duplicate the issue"
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Aditional information
+      description: "List any other information that is relevant to your issue."
+    validations:
+      required: false
+  - type: checkboxes
+    attributes:
+      label: Self-service
+      description: |
+        If you feel like you could contribute to this issue, please check the box below. This would tell us and other people looking for contributions that someone's working on it.
+        If you do check this box, please send a pull request within 7 days so we can still delegate this to someone else.
+      options:
+        - label: I'd be willing to address this documentation request myself.
+  - type: checkboxes
+    attributes:
+      label: Have you read the Contributing Guidelines?
+      options:
+        - label: I have read the [Contributing Guidelines](https://github.com/srealmoreno/rae-tesis/blob/main/docs/CONTRIBUTING.md).
+          required: true
+  - type: checkboxes
+    attributes:
+      label: Are you familiar with Contributor Covenant Code of Conduct?
+      options:
+        - label: I have read the [Contributor Covenant Code of Conduct](https://github.com/srealmoreno/rae-tesis/blob/main/docs/CODE_OF_CONDUCT.md).
+          required: true
+  - type: input
+    id: contact
+    attributes:
+      label: Contact Details
+      description: How can we get in touch with you if we need more info?
+      placeholder: ex. email@example.com
+    validations:
+      required: false
