@@ -29,7 +29,7 @@ Descarga el script de instalación:
 Descargar desde línea de ordenes:
 
 ```bash
-wget https://raw.githubusercontent.com/srealmoreno/rae/master/scripts/rae-ubuntu-install.sh
+wget https://raw.githubusercontent.com/srealmoreno/rae-tesis/main/scripts/rae-ubuntu-install.sh
 ```
 
 Dar permisos de ejecución
