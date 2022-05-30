@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Wiki
+    url: https://github.com/srealmoreno/rae-tesis/wiki
+    about: Wiki
+  - name: Community Discussions
+    url: https://github.com/srealmoreno/rae-tesis/discussions
+    about: Please ask and answer questions here.
