@@ -1,5 +1,7 @@
 # RAE Tesis Repo
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/59b9bbbcc6ab43b985c261731b0ff639)](https://www.codacy.com/gh/srealmoreno/rae-tesis/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=srealmoreno/rae-tesis&amp;utm_campaign=Badge_Grade)
+
 Este repositorio contiene los recursos necesarios para la elaboración de
 las prácticas de la asignatura Redes de Area Extensa.
 
@@ -14,9 +16,13 @@ las prácticas de la asignatura Redes de Area Extensa.
 
 ### Alternativas 📋
 
-Si tu sistema operativo no es Ubuntu o derivado, puedes echar un vistazo a nuestra [Wiki](https://github.com/srealmoreno/rae-tesis/wiki/alternativas-instalacion) para ver las alternativas.
+Si tu sistema operativo no es Ubuntu o derivado, puedes echar un vistazo a nuestra
+[Wiki](https://github.com/srealmoreno/rae-tesis/wiki/alternativas-instalacion)
+para ver las alternativas.
 
 ### Instalación 🔧
+
+[![Ubuntu script install - tests](https://github.com/srealmoreno/rae-tesis/actions/workflows/rae-ubuntu-install.yml/badge.svg)](https://github.com/srealmoreno/rae-tesis/actions/workflows/rae-ubuntu-install.yml)
 
 Descarga el script de instalación:
 
@@ -54,11 +60,13 @@ Puedes encontrar mucho más de cómo utilizar este proyecto en nuestra [Wiki](ht
 - **Lester Stayner** [LesterVega](https://github.com/LesterVega)
 - **Omar Ezequiel** [OmarRizo](https://github.com/OmarRizo)
 
-También puedes mirar la lista de todos los [contribuyentes](https://github.com/srealmoreno/rae-tesis/contributors) quíenes han participado en este proyecto.
+También puedes mirar la lista de todos los [contribuyentes](https://github.com/srealmoreno/rae-tesis/contributors)
+quíenes han participado en este proyecto.
 
 ## Licencia 📄
 
-Este proyecto está bajo la Licencia GNU General Public License v3.0 - mira el archivo [LICENSE.md](LICENSE.md) para más detalles
+Este proyecto está bajo la Licencia GNU General Public License v3.0 - mira el archivo
+[LICENSE.md](LICENSE.md) para más detalles
 
 ## Expresiones de Gratitud 🎁
 
