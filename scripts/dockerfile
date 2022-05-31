@@ -1,0 +1,42 @@
+# This is dockerfile script for testing install scripts
+
+# Defining environment
+ARG DISTRO=ubuntu
+ARG DISTRO_VERSION=20.04
+ARG PACKAGE_MANAGER=apt
+ARG APP_IMAGE=${DISTRO}:${DISTRO_VERSION}
+ARG SCRIPT=rae-${DISTRO}-install.sh
+
+# hadolint ignore=DL3006
+FROM ${APP_IMAGE} as base
+WORKDIR /root
+ARG SCRIPT
+COPY ${SCRIPT} test-install-script.sh
+RUN chmod +x test-install-script.sh
+
+FROM base as apt-manager
+# hadolint ignore=DL3008
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    sudo \
+    locales \
+    && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen --purge 'en_US.UTF-8'
+
+FROM base as pacman-manager
+RUN pacman -Syu --noconfirm && \
+    pacman -S --noconfirm --needed \
+    sudo \
+    && \
+    rm -rf /var/lib/pacman/sync/*
+
+# hadolint ignore=DL3006
+FROM ${PACKAGE_MANAGER}-manager as final
+ENV DEBIAN_FRONTEND=noninteractive
+ENV LANGUAGE=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
+ENV LC_CTYPE=en_US.UTF-8
+ENTRYPOINT ["sudo", "--preserve-env", "./test-install-script.sh", "--all"]
