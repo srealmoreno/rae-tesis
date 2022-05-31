@@ -6,3 +6,9 @@ contact_links:
   - name: Community Discussions
     url: https://github.com/srealmoreno/rae-tesis/discussions
     about: Please ask and answer questions here.
+  - name: Contribute guidelines
+    url: https://github.com/srealmoreno/rae-tesis/blob/main/docs/CONTRIBUTING.md
+    about: Guidelines for contributing to the project.
+  - name: Code of Conduct
+    url: https://github.com/srealmoreno/rae-tesis/blob/main/docs/CODE_OF_CONDUCT.md
+    about: Code of conduct for the project.
