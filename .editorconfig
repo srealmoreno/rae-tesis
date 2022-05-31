@@ -1,0 +1,16 @@
+root = true
+
+[*]
+end_of_file = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+ident_style = space
+ident_size = 2
+
+[*.{sh,bash}]
+indent_style = tab
+indent_size = 4
+
+[*.{md,markdown}]
+trim_trailing_whitespace = false
