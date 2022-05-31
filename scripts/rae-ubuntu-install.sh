@@ -555,7 +555,6 @@ function arguments_parse() {
 			msg_error "Invalid option: $1"
 			;;
 		esac
-		shift
 	done
 }
 
