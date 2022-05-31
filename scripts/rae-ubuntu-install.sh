@@ -184,8 +184,9 @@ function install_dependencies() {
 	msg_info 'Installing dependencies'
 
 	create_window 'Installing dependencies...' "${APT_DEPENDENCIES_LIST[@]}"
-	apt-get update
-	apt-get install --show-progress -y --no-install-recommends "${APT_DEPENDENCIES_LIST[@]}"
+	apt-get update &&
+		DEBIAN_FRONTEND=noninteractive \
+			apt-get install --show-progress -y --no-install-recommends "${APT_DEPENDENCIES_LIST[@]}"
 
 	if [ $? -eq 0 ]; then
 		close_window
@@ -423,7 +424,7 @@ function get_gns3_controller_path() {
 		fi
 
 		if [[ ${log,,} =~ 'connected to compute websocket' ]]; then
-			kill -TERM "$(pgrep -f "gns3server")" 2>/dev/null
+			pkill -f 'gns3server' 2>/dev/null
 			break
 		fi
 	done < <(runuser -u "$SUDO_USER" gns3server 2>/dev/null)
@@ -555,7 +556,6 @@ function arguments_parse() {
 			msg_error "Invalid option: $1"
 			;;
 		esac
-		shift
 	done
 }
 
