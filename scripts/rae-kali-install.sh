@@ -232,6 +232,24 @@ function add_docker_repo() {
 	)
 }
 
+function add_debian_repo() {
+	msg_info 'Adding Debian repository'
+
+	tput sc
+	msg_warn 'To install virtualbox 6.1 you need to add the debian buster repository.'
+	if ! prompt_yes_or_no 'This could be dangerous. Do you want to continue?'; then
+		msg_info 'Please install virtualbox manually'
+		msg_ok 'Installation virtualbox skipped'
+		f_install_virtualbox=false
+		return
+	fi
+
+	# shellcheck disable=SC2015
+	cat <<-EOF >>/etc/apt/sources.list && msg_ok '' || msg_error 'Unable to create Debian repository file'
+		deb http://deb.debian.org/debian buster main
+	EOF
+}
+
 function add_virtualbox_repo() {
 	msg_info 'Adding VirtualBox repository'
 	wget -qO- 'https://www.virtualbox.org/download/oracle_vbox_2016.asc' |
@@ -590,6 +608,7 @@ function install() {
 	fi
 
 	if $f_install_virtualbox; then
+		add_debian_repo
 		add_virtualbox_repo
 	fi
 
