@@ -22,7 +22,7 @@ on:
         type: string
 jobs:
   build-distro:
-    if: ${{ github.event.workflow.conclusion == "success" }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
