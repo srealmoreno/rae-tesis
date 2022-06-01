@@ -16,7 +16,7 @@ jobs:
 
   test-debian-10:
     needs: [shell-check]
-    uses: .github/workflows/test-install-scripts.yml@main
+    uses: /.github/workflows/test-install-scripts
     with:
       distro: debian
       distro-version: 10
@@ -25,7 +25,7 @@ jobs:
 
   test-debian-11:
     needs: [shell-check]
-    uses: .github/workflows/test-install-scripts.ym@main
+    uses: /.github/workflows/test-install-scripts
     with:
       distro: debian
       distro-version: 11
