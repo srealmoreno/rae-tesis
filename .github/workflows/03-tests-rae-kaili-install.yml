@@ -1,8 +1,8 @@
-name: Debian script install - tests
+name: Kali script install - tests
 
 on:
   pull_request:
-    paths: [scripts/rae-debian-install.sh]
+    paths: [scripts/rae-kali-install.sh]
     branches: [main]
 jobs:
   test-kali-rolling:
