@@ -1,3 +1,4 @@
+name: test-install-scripts
 on:
   workflow_call:
     inputs:
