@@ -1,0 +1,22 @@
+name: Ubuntu script install - tests
+
+on:
+  pull_request:
+    paths: [scripts/rae-ubuntu-install.sh]
+    branches: [main]
+jobs:
+  test-ubuntu-bionic:
+    uses: ./.github/workflows/01-reusable-test-install-scripts.yml
+    with:
+      distro: ubuntu
+      distro-version: bionic
+      package-manager: apt
+      script: rae-ubuntu-install.sh
+
+  test-ubuntu-focal:
+    uses: ./.github/workflows/01-reusable-test-install-scripts.yml
+    with:
+      distro: ubuntu
+      distro-version: focal
+      package-manager: apt
+      script: rae-ubuntu-install.sh
