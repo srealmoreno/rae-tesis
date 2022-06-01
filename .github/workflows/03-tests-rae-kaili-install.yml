@@ -8,7 +8,8 @@ jobs:
   test-kali-rolling:
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
     with:
-      distro: kalilinux
-      distro-version: kali-rolling
+      distro: kali
+      distro-version: rolling
       package-manager: apt
       script: rae-kali-install.sh
+      docker-image: kalilinux/kali-rolling:latest
