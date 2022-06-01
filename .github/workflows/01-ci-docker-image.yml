@@ -1,6 +1,12 @@
 name: Docker image ci
 
 on:
+  workflow_run:
+    workflows:
+      - Codacy Security Scan
+      - GitGuardian Security Checks
+    types:
+      - completed
   push:
     paths: [docker/**]
     branches: [main]
@@ -9,38 +15,25 @@ on:
     branches: [main]
 jobs:
   avoid_redundancy:
+    if: ${{ github.event.workflow.conclusion == "success" }}
     runs-on: ubuntu-20.04
     steps:
       - name: Cancel redundant workflow
         uses: styfle/cancel-workflow-action@0.9.1
-  shell-check:
-    runs-on: ubuntu-20.04
-    steps:
-      -
-        uses: actions/checkout@v3
-      -
-        name: Run ShellCheck
-        uses: azohra/shell-linter@latest
-        with:
-          path: docker/!(dockerfile)
   build:
-    needs: [shell-check]
+    if: ${{ github.event.workflow.conclusion == "success" }}
     runs-on: ubuntu-20.04
     steps:
-      -
-        uses: actions/checkout@v3
-      -
-        name: Set up Docker Buildx
+      - uses: actions/checkout@v3
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      -
-        name: Build Docker image and export
+      - name: Build Docker image and export
         uses: docker/build-push-action@v3
         with:
           context: docker
           tags: ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}, ${{ secrets.DOCKERHUB_REPO }}:latest
           outputs: type=docker,dest=/tmp/docker-image-${{ github.run_number }}.tar.gz
-      -
-        if: ${{ github.event_name == 'push' }}
+      - if: ${{ github.event_name == 'push' }}
         name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
@@ -50,29 +43,24 @@ jobs:
   publish:
     if: ${{ github.event_name == 'push' }}
     runs-on: ubuntu-20.04
-    needs: [shell-check, build]
+    needs: [build]
     steps:
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      -
-        name: Download artifact
+      - name: Download artifact
         uses: actions/download-artifact@v3
         with:
           name: docker-image-${{ github.run_number }}.tar.gz
           path: /tmp/
-      -
-        name: Load image
+      - name: Load image
         run: |
           docker load -i /tmp/docker-image-${{ github.run_number }}.tar.gz
-      -
-        name: Login to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN}}
-      -
-        name: Publish image
+      - name: Publish image
         run: |
           docker push ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}
           docker push ${{ secrets.DOCKERHUB_REPO }}:latest

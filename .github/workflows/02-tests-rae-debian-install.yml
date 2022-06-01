@@ -1,0 +1,22 @@
+name: Debian script install - tests
+
+on:
+  pull_request:
+    paths: [scripts/rae-debian-install.sh]
+    branches: [main]
+jobs:
+  test-debian-buster:
+    uses: ./.github/workflows/01-reusable-test-install-scripts.yml
+    with:
+      distro: debian
+      distro-version: buster
+      package-manager: apt
+      script: rae-debian-install.sh
+
+  test-debian-bullseye:
+    uses: ./.github/workflows/01-reusable-test-install-scripts.yml
+    with:
+      distro: debian
+      distro-version: bullseye
+      package-manager: apt
+      script: rae-debian-install.sh
