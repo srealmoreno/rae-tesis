@@ -1,0 +1,14 @@
+name: Kali script install - tests
+
+on:
+  pull_request:
+    paths: [scripts/rae-kali-install.sh]
+    branches: [main]
+jobs:
+  test-kali-rolling:
+    uses: ./.github/workflows/01-reusable-test-install-scripts.yml
+    with:
+      distro: kalilinux
+      distro-version: kali-rolling
+      package-manager: apt
+      script: rae-kali-install.sh
