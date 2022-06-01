@@ -31,7 +31,7 @@ jobs:
           outputs: type=docker,dest=/tmp/docker-image-${{ inputs.distro }}-${{ inputs.distro-version }}.tar.gz
           build-args: |
             DISTRO=${{ inputs.distro }}
-            VERSION=${{ inputs.distro-version }}
+            DISTRO_VERSION=${{ inputs.distro-version }}
             PACKAGE_MANAGER=${{ inputs.package-manager }}
             SCRIPT=${{ inputs.script }}
 
