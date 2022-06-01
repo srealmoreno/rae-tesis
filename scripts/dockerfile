@@ -1,14 +1,14 @@
 # This is dockerfile script for testing install scripts
 
 # Defining environment
-ARG DISTRO=ubuntu
-ARG DISTRO_VERSION=20.04
-ARG PACKAGE_MANAGER=apt
-ARG APP_IMAGE=${DISTRO}:${DISTRO_VERSION}
-ARG SCRIPT=rae-${DISTRO}-install.sh
+ARG DISTRO
+ARG DISTRO_VERSION
+ARG PACKAGE_MANAGER
+ARG DOCKER_IMAGE=${DOCKER_IMAGE:-${DISTRO}:${DISTRO_VERSION}}
+ARG SCRIPT=${SCRIPT:-rae-${DISTRO}-install.sh}
 
 # hadolint ignore=DL3006
-FROM ${APP_IMAGE} as base
+FROM ${DOCKER_IMAGE} as base
 WORKDIR /root
 ARG SCRIPT
 COPY ${SCRIPT} test-install-script.sh
