@@ -1,11 +1,5 @@
 name: test-install-scripts
 on:
-  workflow_run:
-    workflows:
-      - Codacy Security Scan
-      - GitGuardian Security Checks
-    types:
-      - completed
   workflow_call:
     inputs:
       distro:
@@ -22,7 +16,6 @@ on:
         type: string
 jobs:
   build-distro:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
