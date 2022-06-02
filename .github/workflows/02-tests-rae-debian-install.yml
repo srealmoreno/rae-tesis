@@ -4,6 +4,9 @@ on:
   pull_request:
     paths: [scripts/rae-debian-install.sh]
     branches: [main]
+  push:
+    paths: [scripts/rae-debian-install.sh]
+    branches: [main]
 jobs:
   test-debian-buster:
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
