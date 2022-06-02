@@ -37,6 +37,8 @@ jobs:
       - name: Build distro docker image
         uses: docker/build-push-action@v3
         with:
+          load: true
+          publish: false
           context: scripts
           tags: test-${{ inputs.distro }}-${{ inputs.distro-version }}
           build-args: |
