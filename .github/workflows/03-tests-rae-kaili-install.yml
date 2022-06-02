@@ -7,6 +7,8 @@ on:
   push:
     paths: [scripts/rae-kali-install.sh]
     branches: [main]
+  schedule:
+    - cron: 0 0 1 * *
 jobs:
   test-kali-rolling:
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
