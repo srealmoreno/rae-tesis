@@ -1,0 +1,48 @@
+name: Test install script
+description:
+  Composite action to test an install script located in the scripts folder
+  with the specified distro, distro version, package manager and script to test.
+inputs:
+  distro:
+    default: ubuntu
+    required: true
+    description: The distro to test e.g. ubuntu, debian, arch
+  distro-version:
+    default: bionic
+    required: true
+    description: The distro version to test e.g. bionic, buster, latest
+  package-manager:
+    default: apt
+    required: true
+    description: The package manager to test e.g. apt, pacman, yum
+  script:
+    required: false
+    description:
+      The script to test located in the scripts folder e.g. rae-ubuntu-install.sh
+      if not specified, the script will be used rae-${distro}-install.sh
+  docker-image:
+    required: false
+    description: The docker image to test e.g. ubuntu:bionic
+      if not specified, the script will be used ${distro}:${distro-version}
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v3
+
+    - uses: docker/setup-buildx-action@v2
+
+    - name: Build distro docker image
+      uses: docker/build-push-action@v3
+      with:
+        context: scripts
+        tags: test-${{ inputs.distro }}-${{ inputs.distro-version }}
+        build-args: |
+          DISTRO=${{ inputs.distro }}
+          DISTRO_VERSION=${{ inputs.distro-version }}
+          PACKAGE_MANAGER=${{ inputs.package-manager }}
+          SCRIPT=${{ inputs.script }}
+          DOCKER_IMAGE=${{ inputs.docker-image }}
+
+    - name: Test script
+      shell: bash
+      run: docker run --rm -v /var/run/docker.sock:/var/run/docker.sock test-${{ inputs.distro }}-${{ inputs.distro-version }}
