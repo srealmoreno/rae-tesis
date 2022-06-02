@@ -283,7 +283,7 @@ function install_apt_list() {
 function allow_use_package_non_root() {
 	local package="$1"
 
-	yes yes | DEBIAN_FRONTEND=teletype dpkg-reconfigure "$package" ||
+	yes | DEBIAN_FRONTEND=teletype dpkg-reconfigure "$package" ||
 		msg_error "Unable to allow use package '$package' non root"
 }
 
