@@ -1,17 +1,23 @@
 # This is dockerfile script for testing install scripts
 
-# Defining environment
+# Defining mandatory variables
 ARG DISTRO
 ARG DISTRO_VERSION
 ARG PACKAGE_MANAGER
-ARG DOCKER_IMAGE=${DOCKER_IMAGE:-${DISTRO}:${DISTRO_VERSION}}
-ARG SCRIPT=${SCRIPT:-rae-${DISTRO}-install.sh}
+
+# Defining optional variables
+ARG DOCKER_IMAGE
+ARG SCRIPT
+
+# If not set, set default values
+ARG APP_IMAGE=${DOCKER_IMAGE:-${DISTRO}:${DISTRO_VERSION}}
+ARG SCRIPT_TARGET=${SCRIPT:-rae-${DISTRO}-install.sh}
 
 # hadolint ignore=DL3006
-FROM ${DOCKER_IMAGE} as base
+FROM ${APP_IMAGE} as base
 WORKDIR /root
-ARG SCRIPT
-COPY ${SCRIPT} test-install-script.sh
+ARG SCRIPT_TARGET
+COPY ${SCRIPT_TARGET} test-install-script.sh
 RUN chmod +x test-install-script.sh
 
 FROM base as apt-manager
