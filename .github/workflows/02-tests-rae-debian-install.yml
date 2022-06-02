@@ -7,6 +7,8 @@ on:
   push:
     paths: [scripts/rae-debian-install.sh]
     branches: [main]
+  schedule:
+    - cron: 0 0 1 * *
 jobs:
   test-debian-buster:
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
