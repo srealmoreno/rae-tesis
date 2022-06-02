@@ -1,4 +1,4 @@
-name: test-install-scripts
+name: Reusable Workflow for Test Install Scripts
 on:
   workflow_call:
     inputs:
@@ -27,20 +27,18 @@ on:
           The docker image to test e.g. ubuntu:bionic
           if not specified, the script will be used ${distro}:${distro-version}
 jobs:
-  build-distro:
+  test-install-script:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
 
-      - name: set up buildx
-        uses: docker/setup-buildx-action@v2
+      - uses: docker/setup-buildx-action@v2
 
-      - name: build distro image
+      - name: Build distro docker image
         uses: docker/build-push-action@v3
         with:
           context: scripts
           tags: test-${{ inputs.distro }}-${{ inputs.distro-version }}
-          outputs: type=docker,dest=/tmp/docker-image-${{ inputs.distro }}-${{ inputs.distro-version }}.tar.gz
           build-args: |
             DISTRO=${{ inputs.distro }}
             DISTRO_VERSION=${{ inputs.distro-version }}
@@ -48,26 +46,6 @@ jobs:
             SCRIPT=${{ inputs.script }}
             DOCKER_IMAGE=${{ inputs.docker-image }}
 
-      - name: upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: docker-image-${{ inputs.distro }}-${{ inputs.distro-version }}.tar.gz
-          path: /tmp/docker-image-${{ inputs.distro }}-${{ inputs.distro-version }}.tar.gz
-
-  test-distro:
-    runs-on: ubuntu-20.04
-    needs: [build-distro]
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: docker-image-${{ inputs.distro }}-${{ inputs.distro-version }}.tar.gz
-          path: /tmp/
-
-      - name: load image
-        run: |
-          docker load -i /tmp/docker-image-${{ inputs.distro }}-${{ inputs.distro-version }}.tar.gz
-
-      - name: run script
+      - name: Run test script
         run: |
           docker run -v /var/run/docker.sock:/var/run/docker.sock --rm test-${{ inputs.distro }}-${{ inputs.distro-version }}
