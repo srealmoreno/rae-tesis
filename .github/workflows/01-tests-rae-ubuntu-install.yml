@@ -4,6 +4,9 @@ on:
   pull_request:
     paths: [scripts/rae-ubuntu-install.sh]
     branches: [main]
+  push:
+    paths: [scripts/rae-ubuntu-install.sh]
+    branches: [main]
 jobs:
   test-ubuntu-bionic:
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
