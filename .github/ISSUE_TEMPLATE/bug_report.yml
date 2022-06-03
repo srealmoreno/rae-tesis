@@ -12,8 +12,7 @@ body:
     attributes:
       label: Environment
       description: >
-        Please describe your environment e.g: `cat /etc/os-release`
-
+        Please describe your environment in markdown e.g: `cat /etc/os-release`
         It may contain any additional information which would help to reproduce the issue.
       placeholder: |
         NAME="Ubuntu"
@@ -30,34 +29,53 @@ body:
         UBUNTU_CODENAME=focal
     validations:
       required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: >
+        A clear and concise description of the bug. Please include as much detail as possible.
+    validations:
+      required: true
+
   - type: textarea
     id: expected
     attributes:
       label: Expected behavior
-      description: "Please describe the expected behavior"
+      description: Please describe the expected behavior
     validations:
       required: true
+
   - type: textarea
     id: current
     attributes:
       label: Current behavior
-      description: "Please describe how the bug manifests"
+      description: Please describe how the bug manifests
     validations:
       required: true
+
   - type: textarea
     id: reproduce
     attributes:
       label: Steps to reproduce
-      description: "Explain the steps required to duplicate the issue"
+      description: Explain the steps required to duplicate the issue
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
     validations:
       required: true
+
   - type: textarea
     id: additional
     attributes:
       label: Aditional information
-      description: "List any other information that is relevant to your issue."
+      description: List any other information that is relevant to your issue.
     validations:
       required: false
+
   - type: checkboxes
     attributes:
       label: Self-service
@@ -66,18 +84,21 @@ body:
         If you do check this box, please send a pull request within 7 days so we can still delegate this to someone else.
       options:
         - label: I'd be willing to address this documentation request myself.
+
   - type: checkboxes
     attributes:
       label: Have you read the Contributing Guidelines?
       options:
         - label: I have read the [Contributing Guidelines](https://github.com/srealmoreno/rae-tesis/blob/main/docs/CONTRIBUTING.md).
           required: true
+
   - type: checkboxes
     attributes:
       label: Are you familiar with Contributor Covenant Code of Conduct?
       options:
         - label: I have read the [Contributor Covenant Code of Conduct](https://github.com/srealmoreno/rae-tesis/blob/main/docs/CODE_OF_CONDUCT.md).
           required: true
+
   - type: input
     id: contact
     attributes:
