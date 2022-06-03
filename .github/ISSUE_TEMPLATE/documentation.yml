@@ -2,8 +2,6 @@ name: "📚 Documentation"
 description: The issue request for changes indocumentation
 title: "[docs]: "
 labels: ["documentation 📝"]
-assignees:
-  - ss-o
 body:
   - type: markdown
     attributes:
@@ -26,6 +24,7 @@ body:
       description: Tell us, what can be done better or a clear and concise description of what the issue is.
     validations:
       required: true
+
   - type: dropdown
     id: ecosystem
     attributes:
@@ -37,6 +36,7 @@ body:
         - Wiki
         - Plugins
         - Other
+
   - type: checkboxes
     attributes:
       label: Self-service
@@ -45,18 +45,21 @@ body:
         If you do check this box, please send a pull request within 7 days so we can still delegate this to someone else.
       options:
         - label: I'd be willing to address this documentation request myself.
+
   - type: checkboxes
     attributes:
       label: Have you read the Contributing Guidelines?
       options:
         - label: I have read the [Contributing Guidelines](https://github.com/srealmoreno/rae-tesis/blob/main/docs/CONTRIBUTING.md).
           required: true
+
   - type: checkboxes
     attributes:
       label: Are you familiar with Contributor Covenant Code of Conduct?
       options:
         - label: I have read the [Contributor Covenant Code of Conduct](https://github.com/srealmoreno/rae-tesis/blob/main/docs/CODE_OF_CONDUCT.md).
           required: true
+
   - type: input
     id: contact
     attributes:
