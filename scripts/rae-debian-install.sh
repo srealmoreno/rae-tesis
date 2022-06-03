@@ -569,7 +569,6 @@ function install() {
 			python3-pyqt5
 			python3-pyqt5.qtsvg
 			python3-pyqt5.qtwebsockets
-			qemu
 			qemu-kvm
 			qemu-utils
 			libvirt-clients
