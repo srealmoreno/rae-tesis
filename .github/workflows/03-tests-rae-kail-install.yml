@@ -13,6 +13,7 @@ on:
     - cron: 0 0 1 * *
 jobs:
   test-kali-rolling:
+    name: 🐉 Test Kali rolling
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
     with:
       distro: kali
