@@ -27,7 +27,7 @@ jobs:
           outputs: type=docker,dest=/tmp/docker-image-${{ github.run_number }}.tar.gz
       - if: ${{ github.event_name == 'push' }}
         name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: docker-image-${{ github.run_number }}.tar.gz
           path: /tmp/docker-image-${{ github.run_number }}.tar.gz
