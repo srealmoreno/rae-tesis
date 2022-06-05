@@ -15,6 +15,7 @@ on:
     - cron: 0 0 1 * *
 jobs:
   test-arch-linux:
+    name: 🅰️ Test ArchLinux
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
     with:
       distro: arch
