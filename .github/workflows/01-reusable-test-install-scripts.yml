@@ -30,11 +30,13 @@ jobs:
   test-install-script:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v3
 
-      - uses: docker/setup-buildx-action@v2
+      - name: 🚀 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Build distro docker image
+      - name: 🐧 Build distro docker image
         uses: docker/build-push-action@v3
         with:
           load: true
@@ -48,6 +50,6 @@ jobs:
             SCRIPT=${{ inputs.script }}
             DOCKER_IMAGE=${{ inputs.docker-image }}
 
-      - name: Run test script
+      - name: 📝 Run test script
         run: |
           docker run -v /var/run/docker.sock:/var/run/docker.sock --rm test-${{ inputs.distro }}-${{ inputs.distro-version }}
