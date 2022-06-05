@@ -14,7 +14,7 @@ on:
   schedule:
     - cron: 0 0 1 * *
 jobs:
-  test-kali-rolling:
+  test-arch-linux:
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
     with:
       distro: arch
