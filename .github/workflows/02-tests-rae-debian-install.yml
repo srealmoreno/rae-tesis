@@ -15,6 +15,7 @@ on:
     - cron: 0 0 1 * *
 jobs:
   test-debian-buster:
+    name: ꩜ Test Debian buster
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
     with:
       distro: debian
@@ -23,6 +24,7 @@ jobs:
       script: rae-debian-install.sh
 
   test-debian-bullseye:
+    name: ꩜ Test Debian bullseye
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
     with:
       distro: debian
