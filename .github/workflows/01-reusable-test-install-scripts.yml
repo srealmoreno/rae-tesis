@@ -1,4 +1,4 @@
-name: Reusable Workflow for Test Install Scripts
+name: ♻️ Reusable Workflow for Test Install Scripts
 on:
   workflow_call:
     inputs:
