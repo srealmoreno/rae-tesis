@@ -13,7 +13,7 @@ jobs:
     name: 🔐 Lock closed issues and PRs
     runs-on: ubuntu-latest
     steps:
-      - name: 🚀 Run stale
+      - name: 🚀 Run lock
         uses: dessant/lock-threads@v3
         with:
           github-token: ${{ github.token }}
