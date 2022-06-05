@@ -3,12 +3,12 @@ name: 🅰️ ArchLinux script install - tests
 on:
   pull_request:
     paths:
-      - scripts/rae-kali-install.sh
+      - scripts/rae-arch-install.sh
       - scripts/dockerfile
     branches: [main]
   push:
     paths:
-      - scripts/rae-kali-install.sh
+      - scripts/rae-arch-install.sh
       - scripts/dockerfile
     branches: [main]
   schedule:
