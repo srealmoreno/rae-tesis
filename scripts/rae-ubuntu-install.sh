@@ -46,10 +46,15 @@ function create_window() {
 }
 
 function close_window() {
+	local -r -i LAST_CODE=$?
 	local -i LINES
 
+	if [ "$LAST_CODE" -ne 0 ]; then
+		press_any_key
+	fi
+
 	if [ "$DEBIAN_FRONTEND" == 'noninteractive' ]; then
-		return 0
+		return "$LAST_CODE"
 	fi
 
 	LINES=$(tput lines)
@@ -65,6 +70,8 @@ function close_window() {
 
 	# Restore cursor position
 	tput rc
+
+	return "$LAST_CODE"
 }
 
 function prompt_yes_or_no() {
@@ -184,16 +191,16 @@ function install_dependencies() {
 	msg_info 'Installing dependencies'
 
 	create_window 'Installing dependencies...' "${APT_DEPENDENCIES_LIST[@]}"
+
 	apt-get update &&
 		DEBIAN_FRONTEND=noninteractive \
 			apt-get install --show-progress -y --no-install-recommends "${APT_DEPENDENCIES_LIST[@]}"
 
+	close_window
+
 	if [ $? -eq 0 ]; then
-		close_window
 		msg_ok 'Dependencies installed'
 	else
-		press_any_key
-		close_window
 		msg_error 'Dependencies not installed'
 	fi
 }
@@ -280,12 +287,11 @@ function install_apt_list() {
 		DEBIAN_FRONTEND=noninteractive \
 			apt-get install --show-progress -y "${APT_LIST_INSTALL[@]}"
 
+	close_window
+
 	if [ $? -eq 0 ]; then
-		close_window
 		msg_ok 'Packages installed'
 	else
-		press_any_key
-		close_window
 		msg_error 'Packages not installed'
 	fi
 }
@@ -304,6 +310,7 @@ function add_user_to_groups() {
 
 	for group in "${LIST_GROUPS[@]}"; do
 		create_window "Adding user to group '$group'"
+
 		if [ "$group" == 'wireshark' ]; then
 			allow_use_package_non_root 'wireshark-common'
 		fi
@@ -314,11 +321,9 @@ function add_user_to_groups() {
 
 		usermod -a -G "$group" "$SUDO_USER"
 
-		if [ $? -eq 0 ]; then
-			close_window
-		else
-			press_any_key
-			close_window
+		close_window
+
+		if [ $? -ne 0 ]; then
 			msg_warn "Unable to add user '$SUDO_USER' to group '$group'"
 		fi
 	done && msg_ok 'User added to groups'
@@ -336,15 +341,14 @@ function import_docker_image() {
 
 		docker pull "$image"
 
+		close_window
+
 		if [ $? -eq 0 ]; then
-			close_window
 			msg_ok "Image '$image' imported"
 		else
-			press_any_key
-			close_window
 			msg_warn "Image '$image' not imported"
 		fi
-	done && msg_ok 'Images imported'
+	done
 }
 
 function create_gns3_template() {
@@ -416,24 +420,32 @@ function create_gns3_template() {
 }
 
 function get_gns3_controller_path() {
-	local controller log
+	local log
+	export GREP_COLOR='0;30;44'
+
+	create_window 'Getting GNS3 controller path'
 
 	while read -r log; do
-		if [ "$controller" == "" ]; then
-			controller=$(grep -oiP 'Load controller configuration file \K.*' <<<"$log")
-		fi
-
-		if [[ ${log,,} =~ 'connected to compute websocket' ]]; then
-			pkill -f 'gns3server' 2>/dev/null
+		gns3_controller_path=$(grep -oiP 'Load controller configuration file \K.*' <<<"$log")
+		if [ $? -eq 0 ]; then
+			grep --color=always 'Load controller configuration file .*' <<<"$log"
+			msg_info "Controller catched!"
+			kill $!
+			wait $! >/dev/null 2>&1
 			break
 		fi
-	done < <(runuser -u "$SUDO_USER" gns3server 2>/dev/null)
+		echo "$log"
+	done < <(timeout 5 runuser -u "$SUDO_USER" gns3server 2>&1)
 
-	if [ "$controller" == '' ]; then
+	unset GREP_COLOR
+
+	if [ "$gns3_controller_path" != '' ]; then
+		close_window
+	else
+		press_any_key
+		close_window
 		msg_error "Unable to get controller configuration file"
 	fi
-
-	echo "$controller"
 }
 
 function import_gns3_templates() {
@@ -443,7 +455,7 @@ function import_gns3_templates() {
 
 	msg_info 'Importing templates for GNS3'
 
-	gns3_controller_path=$(get_gns3_controller_path) || exit 1
+	get_gns3_controller_path
 
 	templates=(
 		[computer]=$(create_gns3_template computer)
@@ -607,7 +619,7 @@ function install() {
 }
 
 function main() {
-	trap 'close_window' EXIT
+	trap 'true;close_window' EXIT
 
 	# Distro variables
 	local CODENAME ID ID_LIKE PRETTY_NAME
