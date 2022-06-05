@@ -1,11 +1,15 @@
-name: Debian script install - tests
+name: ꩜ Debian script install - tests
 
 on:
   pull_request:
-    paths: [scripts/rae-debian-install.sh]
+    paths:
+      - scripts/rae-debian-install.sh
+      - scripts/dockerfile
     branches: [main]
   push:
-    paths: [scripts/rae-debian-install.sh]
+    paths:
+      - scripts/rae-debian-install.sh
+      - scripts/dockerfile
     branches: [main]
   schedule:
     - cron: 0 0 1 * *
