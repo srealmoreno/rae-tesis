@@ -16,17 +16,18 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     steps:
-      - uses: actions/checkout@v3
-      - name: Set up Docker Buildx
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v3
+      - name: 🚀 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Build Docker image and export
+      - name: 📦 Build Docker image and export
         uses: docker/build-push-action@v3
         with:
           context: docker
           tags: ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}, ${{ secrets.DOCKERHUB_REPO }}:latest
           outputs: type=docker,dest=/tmp/docker-image-${{ github.run_number }}.tar.gz
       - if: ${{ github.event_name == 'push' }}
-        name: Upload artifact
+        name: ⬆ Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: docker-image-${{ github.run_number }}.tar.gz
@@ -37,14 +38,14 @@ jobs:
     runs-on: ubuntu-20.04
     needs: [build]
     steps:
-      - name: Set up Docker Buildx
+      - name: 🚀 Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      - name: Download artifact
+      - name: ⤵️ Download artifact
         uses: actions/download-artifact@v3
         with:
           name: docker-image-${{ github.run_number }}.tar.gz
           path: /tmp/
-      - name: Load image
+      - name: 🐋 Load image
         run: |
           docker load -i /tmp/docker-image-${{ github.run_number }}.tar.gz
       - name: Login to Docker Hub
@@ -52,7 +53,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN}}
-      - name: Publish image
+      - name: 💭 Publish image
         run: |
           docker push ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}
           docker push ${{ secrets.DOCKERHUB_REPO }}:latest
