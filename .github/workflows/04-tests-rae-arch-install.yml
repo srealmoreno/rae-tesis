@@ -1,0 +1,24 @@
+name: 🅰️ ArchLinux script install - tests
+
+on:
+  pull_request:
+    paths:
+      - scripts/rae-kali-install.sh
+      - scripts/dockerfile
+    branches: [main]
+  push:
+    paths:
+      - scripts/rae-kali-install.sh
+      - scripts/dockerfile
+    branches: [main]
+  schedule:
+    - cron: 0 0 1 * *
+jobs:
+  test-kali-rolling:
+    uses: ./.github/workflows/01-reusable-test-install-scripts.yml
+    with:
+      distro: arch
+      distro-version: latest
+      package-manager: pacman
+      script: rae-arch-install.sh
+      docker-image: archlinux:latest
