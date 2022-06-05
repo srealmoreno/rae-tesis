@@ -1,11 +1,15 @@
-name: Ubuntu script install - tests
+name: ⭕️ Ubuntu script install - tests
 
 on:
   pull_request:
-    paths: [scripts/rae-ubuntu-install.sh]
+    paths:
+      - scripts/rae-ubuntu-install.sh
+      - scripts/dockerfile
     branches: [main]
   push:
-    paths: [scripts/rae-ubuntu-install.sh]
+    paths:
+      - scripts/rae-ubuntu-install.sh
+      - scripts/dockerfile
     branches: [main]
   schedule:
     - cron: 0 0 1 * *

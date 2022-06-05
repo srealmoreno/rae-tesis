@@ -38,7 +38,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           load: true
-          publish: false
+          push: false
           context: scripts
           tags: test-${{ inputs.distro }}-${{ inputs.distro-version }}
           build-args: |
