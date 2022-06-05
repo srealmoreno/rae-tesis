@@ -15,6 +15,7 @@ on:
     - cron: 0 0 1 * *
 jobs:
   test-ubuntu-bionic:
+    name: ⭕️ Test Ubuntu bionic
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
     with:
       distro: ubuntu
@@ -23,6 +24,7 @@ jobs:
       script: rae-ubuntu-install.sh
 
   test-ubuntu-focal:
+    name: ⭕️ Test Ubuntu focal
     uses: ./.github/workflows/01-reusable-test-install-scripts.yml
     with:
       distro: ubuntu
