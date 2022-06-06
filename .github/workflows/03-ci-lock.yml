@@ -11,7 +11,7 @@ permissions:
 jobs:
   lock:
     name: 🔐 Lock closed issues and PRs
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: 🚀 Run lock
         uses: dessant/lock-threads@v3
