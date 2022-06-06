@@ -26,7 +26,7 @@ jobs:
           context: docker
           tags: ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}, ${{ secrets.DOCKERHUB_REPO }}:latest
           outputs: type=docker,dest=/tmp/docker-image-${{ github.run_number }}.tar.gz
-      - if: ${{ github.event_name == 'push' }}
+      - if: github.event_name == 'push'
         name: ⬆ Upload artifact
         uses: actions/upload-artifact@v3
         with:
@@ -34,7 +34,7 @@ jobs:
           path: /tmp/docker-image-${{ github.run_number }}.tar.gz
 
   publish:
-    if: ${{ github.event_name == 'push' }}
+    if: github.event_name == 'push'
     runs-on: ubuntu-20.04
     needs: [build]
     steps:
