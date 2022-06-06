@@ -1,0 +1,131 @@
+# Rebase or squash branch
+#
+# Description:
+#   rebase or squash current branch (main->current)
+#   automatically with a comment in the Pull request.
+#
+# Usage:
+#   comment: "@gitbot rebase"  for rebase branch
+#   comment: "@gitbot squash"  for squash branch
+#
+# Requirements:
+#   The author of the comment must meet at least
+#   one requirement:
+#     - Be the owner of the repository
+#     - Be a member of the organization
+#     - Be on the assignees list
+#     - Be the author of the commit
+#
+# Interactions:
+#  👀. Caught comment:
+#   1. When the comment is detected (e.g. @gitbot rebase)
+#      the reaction '👀' will be added to the comment.
+#
+#  👎. Failed:
+#   1. If the author doesn't meet the requirements,
+#      the reaction '👎' will be added to the comment
+#      and the comment will be answered indicating
+#      which has no necessary requirements (See comment below).
+#
+#   2. If the autor meets requirements and the action fails,
+#      the reaction '👎' will be added to the comment.
+
+#  👍. Success:
+#   1. If the author meets requirements and the action is executed successfully,
+#      the reaction '👍' will be added to the comment.
+---
+name: 🧬 Rebase or Squash ci
+on:
+  issue_comment:
+    types: [created]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.issue.id }}
+
+jobs:
+  catch-comment:
+    name: 👀 Catch comment
+    if: >-
+      github.event.issue.pull_request != '' &&
+      (
+        contains(github.event.comment.body, '@gitbot rebase') ||
+        contains(github.event.comment.body, '@gitbot squash')
+      )
+    runs-on: ubuntu-20.04
+    outputs:
+      permission: ${{ steps.check-permissions.outputs.permission }}
+    steps:
+      - name: 👀 Reaction to comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          reactions: eyes
+      - name: 🛂 Check permissions
+        id: check-permissions
+        run: >-
+          echo "::set-output name=permission::${{(
+            github.event.comment.user.id == github.event.repository.owner.id ||
+            github.event.comment.author_association == 'MEMBER' ||
+            contains(github.event.issue.assignees.*.id, github.event.comment.user.id) ||
+            github.event.comment.user.id == github.event.issue.user.id
+          )}}"
+      - uses: hmarr/debug-action@v2
+
+  permission-approved:
+    needs: [catch-comment]
+    name: ✅ Permission approved
+    if: needs.catch-comment.outputs.permission == 'true'
+    runs-on: ubuntu-20.04
+    steps:
+      - name: ⤵️ Check out code from GitHub
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: 🧬 Rebase or Squash
+        id: rebase-squash
+        uses: cirrus-actions/rebase@1.7
+        with:
+          autosquash: ${{ contains(github.event.comment.body, '@gitbot squash') }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 👍 Reaction to comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          reactions: "+1"
+
+      - name: 👎 Reaction to comment
+        if: failure()
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          reactions: "-1"
+
+  permission-denied:
+    needs: [catch-comment]
+    name: ⛔ Permission denied
+    if: needs.catch-comment.outputs.permission == 'false'
+    runs-on: ubuntu-22.04
+    steps:
+      - name: 👎 Reaction to comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          reactions: "-1"
+
+      - name: 💬 Reply comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ### Permission denied ⛔
+
+            @${{ github.event.comment.user.login }} this functionality is not available to you.
+            To use this functionality you must meet at least one of the following requirements:
+
+            - [ ] Be the owner  of the repository
+            - [ ] Be a   member of the organization
+            - [ ] Be on the assignees list
+            - [ ] Be the author of the pull request
