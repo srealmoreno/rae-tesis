@@ -68,7 +68,6 @@ jobs:
             contains(github.event.issue.assignees.*.id, github.event.comment.user.id) ||
             github.event.comment.user.id == github.event.issue.user.id
           )}}"
-      - uses: hmarr/debug-action@v2
 
   permission-approved:
     needs: [catch-comment]
