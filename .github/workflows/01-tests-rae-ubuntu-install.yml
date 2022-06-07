@@ -36,3 +36,12 @@ jobs:
       distro-version: focal
       package-manager: apt
       script: rae-ubuntu-install.sh
+
+  test-ubuntu-jammy:
+    name: ⭕️ Test Ubuntu jammy
+    uses: ./.github/workflows/01-reusable-test-install-scripts.yml
+    with:
+      distro: ubuntu
+      distro-version: jammy
+      package-manager: apt
+      script: rae-ubuntu-install.sh
