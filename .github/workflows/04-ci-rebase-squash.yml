@@ -107,7 +107,7 @@ jobs:
     needs: [catch-comment]
     name: ⛔ Permission denied
     if: needs.catch-comment.outputs.permission == 'false'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     steps:
       - name: 👎 Reaction to comment
         uses: peter-evans/create-or-update-comment@v2
