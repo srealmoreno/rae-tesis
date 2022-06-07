@@ -25,7 +25,8 @@
 #   1. If the author doesn't meet the requirements,
 #      the reaction '👎' will be added to the comment
 #      and the comment will be answered indicating
-#      which has no necessary requirements (See comment below).
+#      that it doesn't meet the necessary requirements.
+#      (See comment below).
 #
 #   2. If the autor meets requirements and the action fails,
 #      the reaction '👎' will be added to the comment.
