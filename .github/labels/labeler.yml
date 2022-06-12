@@ -1,0 +1,20 @@
+ci 🤖:
+  - ".github/workflows/*"
+documentation 📝:
+  - any: ["**/*.md", "!.github/ISSUE_TEMPLATE/*"]
+maintenance 📈:
+  - any: [".github/**/*", "!.github/workflows/*"]
+docker-image 🐋:
+  - "docker/**"
+enhancement ✨:
+  - "scripts/**"
+scripts-install 📦:
+  - "scripts/**"
+script-ubuntu ⭕️:
+  - "scripts/rae-ubuntu-install.sh"
+script-debian ꩜:
+  - "scripts/rae-debian-install.sh"
+script-arch 🅰️:
+  - "scripts/rae-arch-install.sh"
+script-kali 🐉:
+  - "scripts/rae-kali-install.sh"
