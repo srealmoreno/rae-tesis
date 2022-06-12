@@ -9,7 +9,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: stale-lock
+  group: lock
 
 jobs:
   lock:
@@ -22,14 +22,14 @@ jobs:
           github-token: ${{ github.token }}
           issue-inactive-days: 30
           issue-lock-reason: ""
-          issue-comment: >
+          issue-comment:
             Issue closed and locked due to lack of activity.
 
             If you encounter this same issue, please open a new issue and refer
             to this closed one.
           pr-inactive-days: 7
           pr-lock-reason: ""
-          pr-comment: >
+          pr-comment:
             Pull Request closed and locked due to lack of activity.
 
             If you'd like to build on this closed PR, you can clone it using
