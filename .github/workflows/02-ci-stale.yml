@@ -1,16 +1,19 @@
-name: 🧹 Clean up stale issues and PRs
+name: 👻 Stale Close Issues and PRs
 
 on:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: 0 0 * * *
 
 permissions:
   issues: write
   pull-requests: write
 
+concurrency:
+  group: stale
+
 jobs:
   stale:
-    name: 🧹 Clean up stale issues and PRs
+    name: 👻 Stale Close Issues and PRs
     runs-on: ubuntu-20.04
     steps:
       - name: 🚀 Run stale
@@ -20,22 +23,27 @@ jobs:
           days-before-stale: 30
           days-before-close: 7
           remove-stale-when-updated: true
-          stale-issue-label: "stale 👻"
-          exempt-issue-labels: "no-stale 🔒,help-wanted 🙋"
-          stale-issue-message: >
+          stale-issue-label: stale 👻
+          exempt-issue-labels: no-stale 🔒,help-wanted 🙋
+          stale-issue-message:
             There hasn't been any activity on this issue recently, and in order
             to prioritize active issues, it will be marked as stale.
+
             Please make sure to update to the latest version and
             check if that solves the issue. Let us know if that works for you
             by leaving a 👍
+
             Because this issue is marked as stale, it will be closed and locked
             in 7 days if no further activity occurs.
+
             Thank you for your contributions!
-          stale-pr-label: "stale 👻"
-          exempt-pr-labels: "no-stale 🔒"
-          stale-pr-message: >
+          stale-pr-label: stale 👻
+          exempt-pr-labels: no-stale 🔒
+          stale-pr-message:
             There hasn't been any activity on this pull request recently, and in
             order to prioritize active work, it has been marked as stale.
+
             This PR will be closed and locked in 7 days if no further activity
             occurs.
+
             Thank you for your contributions!
