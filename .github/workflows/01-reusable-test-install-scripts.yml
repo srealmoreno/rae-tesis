@@ -28,6 +28,7 @@ on:
           if not specified, the script will be used ${distro}:${distro-version}
 jobs:
   test-install-script:
+    name: 📝 Test Install Script
     runs-on: ubuntu-20.04
     steps:
       - name: ⤵️ Check out code from GitHub
