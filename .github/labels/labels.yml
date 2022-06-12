@@ -1,0 +1,137 @@
+- name: breaking-change 💥
+  color: D93F0B
+  description:
+    A change that changes the API or breaks backward compatibility for
+    users.
+
+- name: bug 🐞
+  color: d73a4a
+  description: Inconsistencies or issues which will cause a problem for users or implementors.
+
+- name: ci 🤖
+  color: "536266"
+  description: Work that improves the continuous integration.
+
+- name: dependencies 📦
+  color: D9CBBB
+  description: Pull requests that update a dependency file.
+
+- name: documentation 📝
+  color: 0075ca
+  description: Solely about the documentation of the project.
+
+- name: duplicate 👥
+  color: cfd3d7
+  description: This issue or pull request already exists.
+
+- name: enhancement ✨
+  color: a2eeef
+  description: Enhancement of the code, not introducing new features.
+
+- name: feature-request 💡
+  color: 0E8A16
+  description: Suggests new feature.
+
+- name: fix ⚡
+  color: 3D5FD0
+  description: Has been fixed and is therefore considered resolved.
+
+- name: "github-actions :octocat:"
+  color: AEB2AC
+  description: GitHub Actions.
+
+- name: good first issue 🎉
+  color: 7057ff
+  description: Good first issue for people wanting to contribute to this project.
+
+- name: help wanted 🙋
+  color: "008672"
+  description: We need some extra helping hands or expertise in order to resolve this!.
+
+- name: invalid ⚠️
+  color: e4e669
+  description: This is off-topic or incorrect.
+
+- name: locked ‼
+  color: B60205
+  description: Spam, inappropriate or otherwise doesn't apply to this project.
+
+- name: maintenance 📈
+  color: C2E0C6
+  description: Generic maintenance tasks.
+
+- name: new-feature 🎉
+  color: 0E8A16
+  description: Introduces new feature.
+
+- name: no-stale 🔒
+  color: FEF2C0
+  description: This is exempt from the stale bot.
+
+- name: performance 🚀
+  color: 042C25
+  description: Improving performance of the project, not introducing new features.
+
+- name: priority-low 🔖
+  color: BFD4F2
+  description: This issue currently can't be resolved.
+
+- name: Q&A ✍
+  color: BFDADC
+  description: Questions and answers.
+
+- name: question 🤔
+  color: d876e3
+  description: Further information is requested.
+
+- name: refactor ♻️
+  color: 1D76DB
+  description:
+    Simplified code that is easier to understand or more efficient syntax
+    or methods.
+
+- name: resolved ☑
+  color: 0E8A16
+  description: The issue has been fixed and is therefore considered resolved.
+
+- name: security 🛡️
+  color: FBCA04
+  description: Addressing a vulnerability or security risk in this project.
+
+- name: stale 👻
+  color: D4C5F9
+  description: No activity for quite some time.
+
+- name: triage 📑
+  color: FBCA04
+  description: The issue is awaiting investigation.
+
+- name: wontfix ⚓
+  color: ffffff
+  description: This will not be worked on.
+
+- name: docker-image 🐋
+  color: 76A5AF
+  description:
+    Pull requests that update the dockerfile that builds the docker image o
+    any file in the docker directory.
+
+- name: script-ubuntu ⭕️
+  color: A2C4C9
+  description: Pull requests that update the scripts/rae-ubuntu-install.sh script.
+
+- name: script-debian ꩜
+  color: EA9999
+  description: Pull requests that update the scripts/rae-debian-install.sh script.
+
+- name: script-arch 🅰️
+  color: 0C343D
+  description: Pull requests that update the scripts/rae-arch-install.sh script.
+
+- name: script-kali 🐉
+  color: 5B5B5B
+  description: Pull requests that update the scripts/rae-kali-install.sh script.
+
+- name: scripts-install 📦
+  color: F1C40F
+  description: Pull requests that update any file in the scripts directory.
