@@ -1,0 +1,30 @@
+name: 🕵️‍♂️ Verify Pull Request Labels
+
+on:
+  workflow_dispatch:
+  pull_request_target:
+    types: [opened, labeled, unlabeled, synchronize]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pr-labels:
+    name: 🕵️‍♂️ Verify Pull Request Labels
+    runs-on: ubuntu-20.04
+    steps:
+      - name: 🏷 Verify PR has a valid label
+        uses: jesusvasquez333/verify-pr-label-action@v1.4.0
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          pull-request-number: "${{ github.event.pull_request.number }}"
+          valid-labels: >-
+            breaking-change 💥, bug 🐞, documentation 📝, enhancement ✨, security 🛡️, refactor ♻️,
+            performance 🚀, new-feature 🎉, triage 📑, maintenance 📈, ci 🤖, fix ⚡, docker-image 🐋, script-ubuntu ⭕️,
+            script-debian ꩜, script-arch 🅰️, script-kali 🐉, scripts-install 📦
+
+          invalid-labels: >-
+            Q&A ✍️, stale 👻, no-stale 🔒, locked ‼️, resolved ☑️, feature-request 💡, help-wanted, priority-low 🔖, invalid ⚠️,
+            duplicate 👥, wontfix ⚓
+          disable-reviews: true
