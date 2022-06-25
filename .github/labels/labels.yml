@@ -113,8 +113,7 @@
 - name: docker-image 🐋
   color: 76A5AF
   description:
-    Pull requests that update the dockerfile that builds the docker image o
-    any file in the docker directory.
+    Pull requests that update any file in the docker directory.
 
 - name: script-ubuntu ⭕️
   color: A2C4C9
