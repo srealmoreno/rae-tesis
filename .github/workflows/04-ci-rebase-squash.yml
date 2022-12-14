@@ -84,7 +84,7 @@ jobs:
 
       - name: 🧬 Rebase or Squash
         id: rebase-squash
-        uses: cirrus-actions/rebase@1.7
+        uses: cirrus-actions/rebase@1.8
         with:
           autosquash: ${{ contains(github.event.comment.body, '@gitbot squash') }}
         env:
