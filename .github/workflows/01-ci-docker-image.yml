@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 🚀 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: 📦 Build Docker image and export
         uses: docker/build-push-action@v3
@@ -44,7 +44,7 @@ jobs:
     needs: [build]
     steps:
       - name: 🚀 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: ⤵️ Download artifact
         uses: actions/download-artifact@v3
