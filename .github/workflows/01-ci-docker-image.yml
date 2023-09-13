@@ -24,7 +24,7 @@ jobs:
         uses: docker/setup-buildx-action@v2
 
       - name: 📦 Build Docker image and export
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: docker
           tags: ${{ secrets.DOCKERHUB_REPO }}:${{ github.run_number }}, ${{ secrets.DOCKERHUB_REPO }}:latest
